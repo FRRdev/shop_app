@@ -4,11 +4,13 @@ from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import DevelopementConfig
+from flask_bootstrap import Bootstrap
 
 app = Flask(__name__)
 app.config.from_object(DevelopementConfig)
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
 login = LoginManager(app)
+bootstrap = Bootstrap(app)
 
-from app import routes
+from app import routes,models

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- CSS only -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
-        <link rel="stylesheet" href="style.css">
+        <link type="text/css" rel="stylesheet" href="{{ url_for('static',filename='css/style.css')}}">
     {% block title %}
 
             {% if title %}
@@ -13,13 +13,17 @@
             {% else %}
             <title>Index</title>
             {% endif %}
+    {% endblock title %}
 
 </head>
 <body>
-{% block content %}
- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+
+ <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
                 <a href="" class="navbar-brand">Shop App</a>
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+  <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15h9.286zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1zM.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8H.8z"/>
+</svg>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent"
                 aria-controls="navbarContent" aria-expanded="false">
                     <span class="navbar-toggler-icon"></span>
@@ -39,8 +43,8 @@
                     {% if current_user.is_authenticated %}
                     <button class="btn btn-outline-danger ml-3">Выйти</button>
                     {% else %}
-                    <button class="btn btn-outline-success" data-toggle="modal" data-target="#exampleModal">Войти</button>
-                    <button class="btn btn-outline-primary">Зарегестрироваться</button>
+                    <button class="my_btn btn btn-outline-light mr-3" data-toggle="modal" data-target="#exampleModal">Войти</button>
+                    <a href="{{ url_for('register') }}" class="my_btn btn btn-outline-light">Зарегестрироваться</a>
                     {% endif %}
                 </div>
                 </div>
@@ -108,7 +112,39 @@
                 </div>
             </div>
         <!-- Modal-->
-{% endblock content %}
+        <div class="carousel slide" id="carouselControls" data-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img class="d-block w-100" src="{{ url_for('static',filename='img/sale.PNG')}}">
+                    </div>
+                    <div class="carousel-item">
+                        <img class="d-block w-100" src="{{ url_for('static',filename='img/sale2.PNG')}}">
+                    </div>
+                </div>
+
+                <a href="#carouselControls" class="carousel-control-prev" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </a>
+                <a href="#carouselControls" class="carousel-control-next" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </a>
+            </div>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+{% block content %}
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+
+        {% block app_content %}{% endblock %}
+    </div>
+{% endblock %}
 
 </body>
 </html>

@@ -1,0 +1,17 @@
+.carousel-item {
+    height: 600px;
+
+}
+.carousel-item img {
+    height: 600px;
+}
+
+.navbar {
+    background-color:red;
+}
+.my_btn {
+    background-color:#B22222;
+}
+.nav-ic {
+    size:20px;
+}
