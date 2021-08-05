@@ -4,14 +4,21 @@ from wtforms.validators import DataRequired, ValidationError, Email, Length, Equ
 from app.models import Users
 
 
-class RegistrationForm(FlaskForm):
+class LoginForm(FlaskForm):
     username = StringField('Никнейм', validators=[DataRequired()])
-    first_name = StringField('Имя', validators=[DataRequired()])
-    last_name = StringField('Фамилия', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    remember_me = BooleanField('Запомнить меня')
+    submit = SubmitField('Войти')
+
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Никнейм', validators=[DataRequired(), Length(min=4)])
+    first_name = StringField('Имя', validators=[DataRequired(), Length(min=4)])
+    last_name = StringField('Фамилия', validators=[DataRequired(), Length(min=4)])
     email = StringField('Почта', validators=[DataRequired(), Email(message='Введите корректную почту')])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(
-        'Повторите авроль', validators=[DataRequired(), EqualTo('password')])
+        'Повторите авроль', validators=[DataRequired(), EqualTo('password', message='Пароли не совпадают')])
     submit = SubmitField('Зарегестрироваться')
 
     def validate_username(self, username):

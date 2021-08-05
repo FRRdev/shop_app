@@ -5,37 +5,41 @@
 {% block app_content %}
     <div class="container">
     <h2>Регистрация</h2>
-    {% for field, errors in form.errors.items() %}
+        {% if form2.errors %}
+        <div class="alert alert-primary" role="alert">
+    {% for field, errors in form2.errors.items() %}
     {{ ', '.join(errors) }}
     {% endfor %}
-    <form class="form-horizontal" method="POST" action="">
-        {{ form.csrf_token() }}
+        </div>
+        {% endif %}
+    <form class="form-horizontal" method="POST" action="{{ url_for('register') }}">
+        {{ form2.csrf_token() }}
         <div class="form-group">
-            {{ form.username.label }}
-            {{ form.username(class="form-control") }}
+            {{ form2.username.label }}
+            {{ form2.username(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.first_name.label }}
-            {{ form.first_name(class="form-control") }}
+            {{ form2.first_name.label }}
+            {{ form2.first_name(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.last_name.label }}
-            {{ form.last_name(class="form-control") }}
+            {{ form2.last_name.label }}
+            {{ form2.last_name(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.email.label }}
-            {{ form.email(class="form-control") }}
+            {{ form2.email.label }}
+            {{ form2.email(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.password.label }}
-            {{ form.password(class="form-control") }}
+            {{ form2.password.label }}
+            {{ form2.password(class="form-control") }}
         </div>
         <div class="form-group">
-            {{ form.password2.label }}
-            {{ form.password2(class="form-control") }}
+            {{ form2.password2.label }}
+            {{ form2.password2(class="form-control") }}
         </div>
-        <div class="form-group">
-            {{ form.submit(class="btn btn-primary")}}
+        <div class="form-group my-3">
+            {{ form2.submit(class="btn btn-primary")}}
         </div>
     </form>
 </div>

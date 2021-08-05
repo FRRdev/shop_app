@@ -41,7 +41,7 @@
                 </ul>
                 <div class="d-flex">
                     {% if current_user.is_authenticated %}
-                    <button class="btn btn-outline-danger ml-3">Выйти</button>
+                    <a href="{{ url_for('logout') }}" class="my_btn btn btn-outline-light ml-3">Выйти</a>
                     {% else %}
                     <button class="my_btn btn btn-outline-light mr-3" data-toggle="modal" data-target="#exampleModal">Войти</button>
                     <a href="{{ url_for('register') }}" class="my_btn btn btn-outline-light">Зарегестрироваться</a>
@@ -55,58 +55,41 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Form</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Введите данные</h5>
                             <button class="btn-close" data-dismiss="modal" aria-label="close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="">
-                                <div class="row mb-3">
-                                    <label for="inputEmail" class="col-sm-2 col-form-label">Email</label>
-                                    <div class="col-sm-10">
-                                        <input type="email" class="form-control" id="inputEmail">
+                                    {% if form1.errors %}
+                                    <div class="alert alert-primary" role="alert">
+                                        {% for field, errors in form1.errors.items() %}
+                                        {{ ', '.join(errors) }}
+                                            {% endfor %}
                                     </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <label for="inputPass" class="col-sm-2 col-form-label">Password</label>
-                                    <div class="col-sm-10">
-                                        <input type="password" class="form-control" id="inputPass">
-                                    </div>
-                                </div>
-                                <fieldset>
-                                    <div class="row mb-3">
-                                        <legend class="col-form-label col-sm-2">Radio</legend>
-                                        <div class="col-sm-10">
-                                            <div class="form-check">
-                                                <input type="radio" class="form-check-input" name="radios" value="option1" id="radios1" checked>
-                                                <label for="radios1" class="form-check-label">Radio 1</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="radio" class="form-check-input" name="radios" value="option2" id="radios2">
-                                                <label for="radios2" class="form-check-label">Radio 2</label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input type="radio" class="form-check-input" name="radios" value="option3" id="radios3">
-                                                <label for="radios3" class="form-check-label">Radio 3</label>
-                                            </div>
+                                    {% endif %}
+                                <form class="form-horizontal" method="POST" action="{{  url_for('login') }}">
+                                        {{ form1.csrf_token() }}
+                                        <div class="form-group">
+                                                {{ form1.username.label }}
+                                            {{ form1.username(class="form-control") }}
                                         </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-form-label col-sm-2">
-                                            Checkboc
+
+                                        <div class="form-group">
+                                            {{ form1.password.label }}
+                                            {{ form1.password(class="form-control") }}
                                         </div>
-                                        <div class="col-sm-10">
-                                            <div class="form-check">
-                                                <input type="checkbox" id="greed" class="form-check-input">
-                                                <label for="greed" class="form-check-label">Save psw</label>
-                                            </div>
+
+                                        <div class="form-group">
+                                            {{ form1.remember_me.label }}
+                                            {{ form1.remember_me() }}
                                         </div>
-                                    </div>
-                                </fieldset>
-                            </form>
+
+                                        <div class="form-group my-3">
+                                            {{ form1.submit(class="btn btn-primary")}}
+                                        </div>
+                                </form>
                         </div>
                         <div class="modal-footer">
-                            <button class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button class="btn btn-secondary">Save changes</button>
+                            <button class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
                         </div>
                     </div>
                 </div>
