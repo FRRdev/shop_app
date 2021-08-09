@@ -47,10 +47,10 @@ class Users(UserMixin, db.Model):
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
 
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return check_password_hash(self.password, password)
 
     # Flask-Security
     def has_role(self, *args):
@@ -77,7 +77,7 @@ class Product(db.Model):
     name = db.Column(db.String(64), index=True, unique=True)
     description = db.Column(db.Text)
     price = db.Column(db.Float)
-    image = db.Column(db.LargeBinary, nullable=True)
+    image = db.Column(db.String(10000), nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     # cart_id = db.relationship('Cart', secondary=cart_to_product, backref=db.backref('product', lazy='dynamic'))
     comment_id = db.relationship('Comment', backref='product', lazy='dynamic')

@@ -1,42 +1,27 @@
+
 from app import app,db
 from flask import url_for,redirect,request,abort
-from app.models import Users,Role,Category
-
+from app.models import Users,Role,Category,Product,Cart,Comment
+from wtforms import FileField
 from flask_login import current_user
 import flask_login as login
 # flask-security
 from flask_security import SQLAlchemyUserDatastore, Security
-
 # flask-admin
 import flask_admin
-from flask_admin import helpers, expose
+from flask_admin import helpers, expose,form
 from flask_admin.contrib import sqla
 
 user_datastore = SQLAlchemyUserDatastore(db, Users, Role)
 security = Security(app, user_datastore)
 
-# Create customized model view class
-class MyModelView(sqla.ModelView):
+class MyImageView(sqla.ModelView):
+    form_extra_fields = {
+        'image': form.ImageUploadField('Image',
+                                      base_path='app/static/img/',
+                                      thumbnail_size=(200, 200, True))
+    }
 
-    def is_accessible(self):
-        return (current_user.is_active and
-                current_user.is_authenticated and
-                current_user.has_role('admin')
-                )
-
-    def _handle_view(self, name, **kwargs):
-        """
-        Override builtin _handle_view in order to redirect users when a view is not accessible.
-        """
-        if not self.is_accessible():
-            if current_user.is_authenticated:
-                # permission denied
-                abort(403)
-            else:
-                return redirect(url_for('security.login', next=request.url))
-
-
-# Переадресация страниц (используется в шаблонах)
 class MyAdminIndexView(flask_admin.AdminIndexView):
     @expose('/')
     def index(self):
@@ -59,17 +44,16 @@ class MyAdminIndexView(flask_admin.AdminIndexView):
     def reset_page(self):
         return redirect(url_for('.index'))
 
-
 # Create admin
-admin = flask_admin.Admin(app, index_view=MyAdminIndexView(), base_template='admin/master-extended.html')
+admin = flask_admin.Admin(app,index_view=MyAdminIndexView(),base_template='admin/master-extended.html')
 
-# Add view
-admin.add_view(MyModelView(Users, db.session))
+admin.add_view(sqla.ModelView(Users,db.session))
+admin.add_view(MyImageView(Product,db.session))
+admin.add_view(sqla.ModelView(Cart,db.session))
+admin.add_view(sqla.ModelView(Comment,db.session))
+admin.add_view(sqla.ModelView(Category,db.session))
 
 
-
-# define a context processor for merging flask-admin's template context into the
-# flask-security views.
 @security.context_processor
 def security_context_processor():
     return dict(
@@ -78,3 +62,4 @@ def security_context_processor():
         h=helpers,
         get_url=url_for
     )
+
