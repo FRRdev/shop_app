@@ -1,6 +1,7 @@
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
+from flask_security import RoleMixin
 
 
 @login.user_loader
@@ -13,23 +14,50 @@ cart_to_product = db.Table('cart_to_product',
                            db.Column('product_id', db.Integer, db.ForeignKey('product.id'))
                            )
 
+roles_users = db.Table(
+    'roles_users',
+    db.Column('user_id', db.Integer(), db.ForeignKey('users.id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('roles.id'))
+)
+
+
+class Role(db.Model, RoleMixin):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+    def __str__(self):
+        return self.name
+
 
 class Users(UserMixin, db.Model):
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(64), index=True, unique=True)
     first_name = db.Column(db.String(20))
     last_name = db.Column(db.String(20))
     email = db.Column(db.String(120), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
+    password = db.Column(db.String(128))
     cart_id = db.relationship('Cart', backref='user', uselist=False)
     comment_id = db.relationship('Comment', backref='user', lazy='dynamic')
-
+    # Нужен для security!
+    active = db.Column(db.Boolean())
+    # Для получения доступа к связанным объектам
+    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    # Flask-Security
+    def has_role(self, *args):
+        return set(args).issubset({role.name for role in self.roles})
+
+    def get_id(self):
+        return self.id
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -51,7 +79,7 @@ class Product(db.Model):
     price = db.Column(db.Float)
     image = db.Column(db.LargeBinary, nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    #cart_id = db.relationship('Cart', secondary=cart_to_product, backref=db.backref('product', lazy='dynamic'))
+    # cart_id = db.relationship('Cart', secondary=cart_to_product, backref=db.backref('product', lazy='dynamic'))
     comment_id = db.relationship('Comment', backref='product', lazy='dynamic')
 
     def __repr__(self):
@@ -75,4 +103,4 @@ class Comment(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
 
     def __repr__(self):
-        return '<Comment {}'.format(self.id)
+        return '<Comment {}>'.format(self.id)
