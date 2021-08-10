@@ -6,9 +6,10 @@
     <div class="container">
     <h2>Регистрация</h2>
         {% if form2.errors %}
+
         <div class="alert alert-primary" role="alert">
-    {% for field, errors in form2.errors.items() %}
-    {{ ', '.join(errors) }}
+            {% for field, errors in form2.errors.items() %}
+            {{ ', '.join(errors) }}
     {% endfor %}
         </div>
         {% endif %}

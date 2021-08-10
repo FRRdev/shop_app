@@ -12,9 +12,9 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Никнейм', validators=[DataRequired(), Length(min=4)])
-    first_name = StringField('Имя', validators=[DataRequired(), Length(min=4)])
-    last_name = StringField('Фамилия', validators=[DataRequired(), Length(min=4)])
+    username = StringField('Никнейм', validators=[DataRequired(), Length(min=4,message='Минимальная длина поля 4 символа')])
+    first_name = StringField('Имя', validators=[DataRequired(), Length(min=4,message='Минимальная длина поля 4 символа')])
+    last_name = StringField('Фамилия', validators=[DataRequired(), Length(min=4,message='Минимальная длина поля 4 символа')])
     email = StringField('Почта', validators=[DataRequired(), Email(message='Введите корректную почту')])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(

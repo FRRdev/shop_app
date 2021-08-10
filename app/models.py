@@ -1,8 +1,11 @@
+import re
+
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask_security import RoleMixin
-
+import os
+from config import app_dir
 
 @login.user_loader
 def load_user(id):
@@ -81,6 +84,21 @@ class Product(db.Model):
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     # cart_id = db.relationship('Cart', secondary=cart_to_product, backref=db.backref('product', lazy='dynamic'))
     comment_id = db.relationship('Comment', backref='product', lazy='dynamic')
+
+    def get_product_photo(self):
+        if self.image:
+            pattern = re.compile('\'(.*)\'')
+            str_image = str(bytes(self.image))
+            file_name = re.search(pattern,str_image).group(1)
+            path = os.path.join(app_dir,r'app\static\img')
+            if os.path.exists(os.path.join(path,file_name)):
+                os.remove(os.path.join(path,file_name))
+            thumb_file = (file_name.split('.'))[0] + '_thumb.jpg'
+            return os.path.join(path,thumb_file)
+        else:
+            path = os.path.join(app_dir,r'app\static\img\default.png')
+            return path
+
 
     def __repr__(self):
         return '<Products {}>'.format(self.name)

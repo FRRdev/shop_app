@@ -19,7 +19,7 @@ class MyImageView(sqla.ModelView):
     form_extra_fields = {
         'image': form.ImageUploadField('Image',
                                       base_path='app/static/img/',
-                                      thumbnail_size=(200, 200, True))
+                                      thumbnail_size=(200, 200, False))
     }
 
 class MyAdminIndexView(flask_admin.AdminIndexView):
