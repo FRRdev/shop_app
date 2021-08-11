@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block app_content %}
+<div class="container">
+    <div class="row">
+        <div class="col-2">
+            <div class="text-left my-3 font-weight-bold">Выберите категорию:</div>
+            <div class="list-group">
+                {% for category in categories %}
+                <a href="#" class="list-group-item list-group-item-action list-group-item-danger">{{ category.name }} ({{ category.products_id.count() }})</a>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-8 my-4">
+            {% for product in products %}
+            <div class="my-4 border">
+                <div class="d-flex">
+                    <img  class="my-3" src="{{ product.get_product_photo() }}">
+                    <div>
+                        <h5 class="font-weight-bold my-3 ml-3">  {{ product.name }}</h5>
+                        <div class="font-italic mb-3 ml-3">Цена: {{ product.price }}</div>
+                        <div>
+                              <a class="btn btn-danger ml-3" data-toggle="collapse" href="{{ product.get_id_for_carusel() }}" role="button" aria-expanded="false" aria-controls="{{ product.get_href_for_carusel() }}">
+                                    Описание
+                              </a>
+                              <div class="collapse" id="{{ product.get_href_for_carusel() }}">
+                                        <div class="card card-body">
+                                            {{ product.description }}
+                                        </div>
+                              </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="text-center mb-4">
+        {% if prev_url %}
+        <a class="btn btn-danger" href="{{ prev_url }}">Назад</a>
+        {% endif %}
+        {% if next_url %}
+    <a  class="btn btn-danger" href="{{ next_url }}">Далее</a>
+    {% endif %}
+    </div>
+</div>
+
+{% endblock %}

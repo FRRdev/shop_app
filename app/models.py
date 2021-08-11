@@ -7,6 +7,7 @@ from flask_security import RoleMixin
 import os
 from config import app_dir
 
+
 @login.user_loader
 def load_user(id):
     return Users.query.get(int(id))
@@ -85,20 +86,25 @@ class Product(db.Model):
     # cart_id = db.relationship('Cart', secondary=cart_to_product, backref=db.backref('product', lazy='dynamic'))
     comment_id = db.relationship('Comment', backref='product', lazy='dynamic')
 
+    def get_id_for_carusel(self):
+        id = '#' + (self.name).replace(' ', '')
+        return id
+
+    def get_href_for_carusel(self):
+        return (self.name).replace(' ', '')
+
     def get_product_photo(self):
         if self.image:
             pattern = re.compile('\'(.*)\'')
             str_image = str(bytes(self.image))
-            file_name = re.search(pattern,str_image).group(1)
-            path = os.path.join(app_dir,r'app\static\img')
-            if os.path.exists(os.path.join(path,file_name)):
-                os.remove(os.path.join(path,file_name))
+            file_name = re.search(pattern, str_image).group(1)
+            path = os.path.join(app_dir, r'app\static\img')
+            if os.path.exists(os.path.join(path, file_name)):
+                os.remove(os.path.join(path, file_name))
             thumb_file = (file_name.split('.'))[0] + '_thumb.jpg'
-            return os.path.join(path,thumb_file)
+            return os.path.join('static\img', thumb_file).replace('\\', '/')
         else:
-            path = os.path.join(app_dir,r'app\static\img\default.png')
-            return path
-
+            return 'static/img/default.png'
 
     def __repr__(self):
         return '<Products {}>'.format(self.name)

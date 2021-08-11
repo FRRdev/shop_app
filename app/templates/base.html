@@ -32,7 +32,7 @@
                 <ul class="navbar-nav mr-auto mb-2">
                     {% if current_user.is_authenticated %}
                     <li class="nav-item mx-4">
-                        <a href="" class="nav-link">Каталог</a>
+                        <a href="{{ url_for('catalog') }}" class="nav-link">Каталог</a>
                     </li>
                     <li class="nav-item">
                         <a href="" class="nav-link">Корзина</a>
@@ -51,6 +51,7 @@
             </div>
         </nav>
 <!-- Modal-->
+ {% if not current_user.is_authenticated %}
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -94,6 +95,7 @@
                     </div>
                 </div>
             </div>
+ {% endif %}
         <!-- Modal-->
         <div class="carousel slide" id="carouselControls" data-ride="carousel">
                 <div class="carousel-inner">

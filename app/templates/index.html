@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% block app_content %}
+{% if current_user.is_authenticated %}
 <div class="container">
     <div class="my-5 p-3 text-center text-danger font-weight-bolder border border-danger rounded-pill">
-        Спасибо за регистарцию! Удачных покупок!
+        Спасибо за регистарцию {{ current_user.username }}! Удачных покупок!
     </div>
 </div>
+{% endif %}
 {% endblock %}

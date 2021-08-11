@@ -11,5 +11,6 @@ def resize_image():
     resized_image = original_image.resize((200,200))
     resized_image.save('default.png')
 
-file = 'poco'
-print(os.path.join(app_dir,file))
+a = ('Привет',('Пока',))
+for v in a:
+    print(v)
