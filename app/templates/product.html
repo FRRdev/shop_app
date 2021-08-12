@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block app_content %}
+<div class="container">
+  <div class="row">
+    <div class="col-4 my-4">
+      <img src="{{ product.get_product_photo() }}" height="400" width="400">
+    </div>
+    <div class="col-6 my-4">
+      <h5>{{ product.name }}</h5>
+      <div> <b>Цена:</b> {{ product.price }}</div>
+      <div><b>Описание:</b> {{ product.description }}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}
