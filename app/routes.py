@@ -1,8 +1,8 @@
 from flask import render_template, flash, url_for, redirect, request
 from flask_login import current_user, login_user, login_required, logout_user
 from app import app, db
-from app.models import Users, Category, Product
-from app.forms import RegistrationForm, LoginForm
+from app.models import Users, Category, Product, Comment
+from app.forms import RegistrationForm, LoginForm, CommentForm
 
 
 @app.route('/')
@@ -73,8 +73,17 @@ def category(category_id):
     return render_template('catalog.html', categories=categories, products=products.items, title='Каталог',
                            next_url=next_url, prev_url=prev_url)
 
+
 @login_required
-@app.route('/product/<int:product_id>')
+@app.route('/product/<int:product_id>',methods=['GET', 'POST'])
 def product(product_id):
+    form = CommentForm()
     product = Product.query.get(product_id)
-    return render_template('product.html',product=product)
+    comments = Comment.query.filter_by(product_id=product.id).all()
+    if form.validate_on_submit():
+        c = Comment(text=form.text.data, user_id=current_user.id, product_id=product.id)
+        db.session.add(c)
+        db.session.commit()
+        flash('Отзыв успешно добавлен')
+        return redirect(url_for('product',product_id=product.id))
+    return render_template('product.html', product=product, form=form,comments=comments)

@@ -1,15 +1,63 @@
 {% extends 'base.html' %}
 {% block app_content %}
 <div class="container">
-  <div class="row">
-    <div class="col-4 my-4">
-      <img src="{{ product.get_product_photo() }}" height="400" width="400">
+    <div class="row">
+        <div class="col-4 my-4">
+            <img src="{{ product.get_product_photo() }}" height="400" width="400">
+        </div>
+        <div class="col-6 my-4">
+            <h2 class="fs-1">{{ product.name }}</h2>
+            <div><b>Цена:</b> {{ product.price }}</div>
+            <div><b>Описание:</b> {{ product.description }}</div>
+            <div>
+                <a class="btn btn-danger my-2" href="{{ url_for('catalog') }}">Назад</a>
+                <a class="btn btn-outline-danger mr-3" data-toggle="modal" data-target="#commentModal">Оставить
+                    комментарий</a>
+            </div>
+
+        </div>
     </div>
-    <div class="col-6 my-4">
-      <h5>{{ product.name }}</h5>
-      <div> <b>Цена:</b> {{ product.price }}</div>
-      <div><b>Описание:</b> {{ product.description }}</div>
+    <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Введите отзыв</h5>
+                    <button class="btn-close" data-dismiss="modal" aria-label="close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if form.errors %}
+                    <div class="alert alert-primary" role="alert">
+                        {% for field, errors in form.errors.items() %}
+                        {{ ', '.join(errors) }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <form class="form-horizontal" method="POST" action="{{ url_for('product',product_id=product.id) }}">
+                        {{ form.csrf_token() }}
+                        <div class="form-group">
+                            {{ form.text.label }}
+                            {{ form.text(class="form-control") }}
+                        </div>
+
+                        <div class="form-group my-3">
+                            {{ form.submit(class="btn btn-primary")}}
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+    {% if comments %}
+    <h3 class="text-center">Отзывы о продукте</h3>
+    {% for comment in comments %}
+    <div class="my-4 border p-3 border-danger rounded-pill">
+        <h5 class="text-danger">{{ comment.user.username }}</h5>
+        <h6>{{ comment.text }}</h6>
+    </div>
+    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

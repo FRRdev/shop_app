@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, TextField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField,TextAreaField
 from wtforms.validators import DataRequired, ValidationError, Email, Length, EqualTo
 from app.models import Users
 
@@ -30,3 +30,7 @@ class RegistrationForm(FlaskForm):
         user = Users.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Эта почта уже занята')
+
+class CommentForm(FlaskForm):
+    text = TextAreaField('Отзыв')
+    submit = SubmitField('Отправить')
