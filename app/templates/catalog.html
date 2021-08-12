@@ -6,18 +6,19 @@
             <div class="text-left my-3 font-weight-bold">Выберите категорию:</div>
             <div class="list-group">
                 {% for category in categories %}
-                <a href="#" class="list-group-item list-group-item-action list-group-item-danger">{{ category.name }} ({{ category.products_id.count() }})</a>
+                <a href="{{ url_for('category',category_id=category.id) }}" class="list-group-item list-group-item-action list-group-item-danger">{{ category.name }} ({{ category.products_id.count() }})</a>
                 {% endfor %}
             </div>
         </div>
-        <div class="col-8 my-4">
+        <div class="my-4 col-8">
             {% for product in products %}
-            <div class="my-4 border">
-                <div class="d-flex">
-                    <img  class="my-3" src="{{ product.get_product_photo() }}">
-                    <div>
-                        <h5 class="font-weight-bold my-3 ml-3">  {{ product.name }}</h5>
-                        <div class="font-italic mb-3 ml-3">Цена: {{ product.price }}</div>
+            <div class="d-flex py-3 border">
+                <div class="col-3">
+                    <img class="my-3" src="{{ product.get_product_photo() }}" alt="ops">
+                </div>
+                <div class="col-8">
+                        <a class="link-danger font-weight-bold ml-3" href="{{ url_for('product',product_id=product.id) }}" > {{ product.name }}</a>
+                        <div class="font-italic my-2 ml-3">Цена: {{ product.price }}</div>
                         <div>
                               <a class="btn btn-danger ml-3" data-toggle="collapse" href="{{ product.get_id_for_carusel() }}" role="button" aria-expanded="false" aria-controls="{{ product.get_href_for_carusel() }}">
                                     Описание
@@ -28,13 +29,12 @@
                                         </div>
                               </div>
                         </div>
-                    </div>
-
                 </div>
-            </div>
-            {% endfor %}
         </div>
+            {% endfor %}
     </div>
+        </div>
+        </div>
     <div class="text-center mb-4">
         {% if prev_url %}
         <a class="btn btn-danger" href="{{ prev_url }}">Назад</a>

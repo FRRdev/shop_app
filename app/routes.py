@@ -59,3 +59,22 @@ def catalog():
     prev_url = url_for('catalog', page=products.prev_num) if products.has_prev else None
     return render_template('catalog.html', categories=categories, products=products.items, title='Каталог',
                            next_url=next_url, prev_url=prev_url)
+
+
+@login_required
+@app.route('/catalog/<int:category_id>', methods=['GET'])
+def category(category_id):
+    categories = Category.query.all()
+    products_by_category = Product.query.filter_by(category_id=category_id)
+    page = request.args.get('page', 1, type=int)
+    products = products_by_category.paginate(page, app.config['POSTS_PER_PAGE'], False)
+    next_url = url_for('category', page=products.next_num, category_id=category_id) if products.has_next else None
+    prev_url = url_for('category', page=products.prev_num, category_id=category_id) if products.has_prev else None
+    return render_template('catalog.html', categories=categories, products=products.items, title='Каталог',
+                           next_url=next_url, prev_url=prev_url)
+
+@login_required
+@app.route('/product/<int:product_id>')
+def product(product_id):
+    product = Product.query.get(product_id)
+    return render_template('product.html',product=product)

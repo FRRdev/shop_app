@@ -102,9 +102,9 @@ class Product(db.Model):
             if os.path.exists(os.path.join(path, file_name)):
                 os.remove(os.path.join(path, file_name))
             thumb_file = (file_name.split('.'))[0] + '_thumb.jpg'
-            return os.path.join('static\img', thumb_file).replace('\\', '/')
+            return os.path.join('\static\img', thumb_file).replace('\\', '/')
         else:
-            return 'static/img/default.png'
+            return '/static/img/default.png'
 
     def __repr__(self):
         return '<Products {}>'.format(self.name)
