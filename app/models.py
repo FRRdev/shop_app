@@ -83,7 +83,7 @@ class Product(db.Model):
     price = db.Column(db.Float)
     image = db.Column(db.String(10000), nullable=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    # cart_id = db.relationship('Cart', secondary=cart_to_product, backref=db.backref('product', lazy='dynamic'))
+    #cart_id = db.relationship('Cart', secondary=cart_to_product, backref=db.backref('product', lazy='dynamic'))
     comment_id = db.relationship('Comment', backref='product', lazy='dynamic')
 
     def get_id_for_carusel(self):
@@ -112,7 +112,7 @@ class Product(db.Model):
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    total_price = db.Column(db.Float)
+    total_price = db.Column(db.Float, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     product_id = db.relationship('Product', secondary=cart_to_product, backref=db.backref('cart', lazy='dynamic'))
 

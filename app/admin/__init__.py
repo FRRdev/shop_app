@@ -1,7 +1,6 @@
-
-from app import app,db
-from flask import url_for,redirect,request,abort
-from app.models import Users,Role,Category,Product,Cart,Comment
+from app import app, db
+from flask import url_for, redirect, request, abort
+from app.models import Users, Role, Category, Product, Cart, Comment
 from wtforms import FileField
 from flask_login import current_user
 import flask_login as login
@@ -9,18 +8,20 @@ import flask_login as login
 from flask_security import SQLAlchemyUserDatastore, Security
 # flask-admin
 import flask_admin
-from flask_admin import helpers, expose,form
+from flask_admin import helpers, expose, form
 from flask_admin.contrib import sqla
 
 user_datastore = SQLAlchemyUserDatastore(db, Users, Role)
 security = Security(app, user_datastore)
 
+
 class MyImageView(sqla.ModelView):
     form_extra_fields = {
         'image': form.ImageUploadField('Image',
-                                      base_path='app/static/img/',
-                                      thumbnail_size=(200, 200, False))
+                                       base_path='app/static/img/',
+                                       thumbnail_size=(200, 200, False))
     }
+
 
 class MyAdminIndexView(flask_admin.AdminIndexView):
     @expose('/')
@@ -44,14 +45,15 @@ class MyAdminIndexView(flask_admin.AdminIndexView):
     def reset_page(self):
         return redirect(url_for('.index'))
 
-# Create admin
-admin = flask_admin.Admin(app,index_view=MyAdminIndexView(),base_template='admin/master-extended.html')
 
-admin.add_view(sqla.ModelView(Users,db.session))
-admin.add_view(MyImageView(Product,db.session))
-admin.add_view(sqla.ModelView(Cart,db.session))
-admin.add_view(sqla.ModelView(Comment,db.session))
-admin.add_view(sqla.ModelView(Category,db.session))
+# Create admin
+admin = flask_admin.Admin(app, index_view=MyAdminIndexView(), base_template='admin/master-extended.html')
+
+admin.add_view(sqla.ModelView(Users, db.session))
+admin.add_view(MyImageView(Product, db.session))
+admin.add_view(sqla.ModelView(Cart, db.session))
+admin.add_view(sqla.ModelView(Comment, db.session))
+admin.add_view(sqla.ModelView(Category, db.session))
 
 
 @security.context_processor
@@ -62,4 +64,3 @@ def security_context_processor():
         h=helpers,
         get_url=url_for
     )
-

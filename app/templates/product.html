@@ -11,8 +11,9 @@
             <div><b>Описание:</b> {{ product.description }}</div>
             <div>
                 <a class="btn btn-danger my-2" href="{{ url_for('catalog') }}">Назад</a>
-                <a class="btn btn-outline-danger mr-3" data-toggle="modal" data-target="#commentModal">Оставить
+                <a class="btn btn-outline-danger" data-toggle="modal" data-target="#commentModal">Оставить
                     комментарий</a>
+                <a class="btn btn-outline-danger" href="{{ url_for('update_cart',product_id=product.id) }}">Добавить в карзину</a>
             </div>
 
         </div>

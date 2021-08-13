@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block app_content %}
+<div class="container">
+    <div class="row">
+        {% if products %}
+        <h2 class="my-3">Товары в вашей корзине:</h2>
+        {% else %}
+        <h2 class="my-3">Ваша корзина пуста!</h2>
+        {% endif %}
+        <div class="my-4 col-8">
+            {% for product in products %}
+            <div class="d-flex py-3 border">
+                <div class="col-3">
+                    <img src="{{ product.get_product_photo() }}" alt="ops">
+                </div>
+                <div class="col-8">
+                    <a class="link-danger font-weight-bold ml-3" href="{{ url_for('product',product_id=product.id) }}">
+                        {{ product.name }}</a>
+                    <div class="font-italic my-2 ml-3">Цена: {{ product.price }}</div>
+                    <a href="" class="btn btn-danger ml-3">Удалить из корзины</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="my-4 col-4">
+            <h3>Всего к оплате: {{ cart.total_price }}</h3>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -27,6 +27,7 @@
                            role="button" aria-expanded="false" aria-controls="{{ product.get_href_for_carusel() }}">
                             Описание
                         </a>
+                        <a class="btn btn-outline-danger ml-3" href="{{ url_for('product',product_id=product.id) }}">Страница товара</a>
                         <div class="collapse" id="{{ product.get_href_for_carusel() }}">
                             <div class="card card-body">
                                 {{ product.description }}

@@ -37,7 +37,7 @@
                     <a href="{{ url_for('catalog') }}" class="nav-link text-light">Каталог</a>
                 </li>
                 <li class="nav-item">
-                    <a href="" class="nav-link text-light">Корзина</a>
+                    <a href="{{ url_for('cart',cart_id=current_user.cart_id.id) }}" class="nav-link text-light">Корзина <span class="badge badge-pill badge-dark">{{ count }}</span></a>
                 </li>
                 {% endif %}
             </ul>
