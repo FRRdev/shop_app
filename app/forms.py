@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField,TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, ValidationError, Email, Length, EqualTo
 from app.models import Users
 
@@ -12,9 +12,12 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
-    username = StringField('Никнейм', validators=[DataRequired(), Length(min=4,message='Минимальная длина поля 4 символа')])
-    first_name = StringField('Имя', validators=[DataRequired(), Length(min=4,message='Минимальная длина поля 4 символа')])
-    last_name = StringField('Фамилия', validators=[DataRequired(), Length(min=4,message='Минимальная длина поля 4 символа')])
+    username = StringField('Никнейм',
+                           validators=[DataRequired(), Length(min=4, message='Минимальная длина поля 4 символа')])
+    first_name = StringField('Имя',
+                             validators=[DataRequired(), Length(min=4, message='Минимальная длина поля 4 символа')])
+    last_name = StringField('Фамилия',
+                            validators=[DataRequired(), Length(min=4, message='Минимальная длина поля 4 символа')])
     email = StringField('Почта', validators=[DataRequired(), Email(message='Введите корректную почту')])
     password = PasswordField('Пароль', validators=[DataRequired()])
     password2 = PasswordField(
@@ -31,6 +34,8 @@ class RegistrationForm(FlaskForm):
         if user is not None:
             raise ValidationError('Эта почта уже занята')
 
+
 class CommentForm(FlaskForm):
     text = TextAreaField('Отзыв')
     submit = SubmitField('Отправить')
+

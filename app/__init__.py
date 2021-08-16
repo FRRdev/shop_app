@@ -12,6 +12,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager(app)
 bootstrap = Bootstrap(app)
+mail = Mail(app)
 from app.admin.routes import admin_bp
 
 app.register_blueprint(admin_bp, url_prefix='/admin')

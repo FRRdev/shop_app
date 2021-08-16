@@ -13,6 +13,7 @@
             </div>
         </div>
         <div class="my-4 col-8">
+            {% if products %}
             {% for product in products %}
             <div class="d-flex py-3 border">
                 <div class="col-3">
@@ -27,7 +28,8 @@
                            role="button" aria-expanded="false" aria-controls="{{ product.get_href_for_carusel() }}">
                             Описание
                         </a>
-                        <a class="btn btn-outline-danger ml-3" href="{{ url_for('product',product_id=product.id) }}">Страница товара</a>
+                        <a class="btn btn-outline-danger ml-3" href="{{ url_for('product',product_id=product.id) }}">Страница
+                            товара</a>
                         <div class="collapse" id="{{ product.get_href_for_carusel() }}">
                             <div class="card card-body">
                                 {{ product.description }}
@@ -37,6 +39,18 @@
                 </div>
             </div>
             {% endfor %}
+            {% else %}
+            <h2>К сожалению,таких товаров нет!</h2>
+            {% endif %}
+        </div>
+        <div class="col-2 my-4">
+            <form method="POST" action="{{ url_for('search') }}">
+                <input class="form-control mr-2" name="search" type="search" placeholder="Search" aria-label="search">
+                <button class="btn btn-danger my-1" type="submit">Поиск</button>
+            </form>
+            <form>
+
+            </form>
         </div>
     </div>
 </div>

@@ -1,8 +1,10 @@
 from flask import render_template, flash, url_for, redirect, request
 from flask_login import current_user, login_user, login_required, logout_user
-from app import app, db
+from app import app, db, mail
 from app.models import Users, Category, Product, Comment, Cart
 from app.forms import RegistrationForm, LoginForm, CommentForm
+from flask_mail import Message
+from smtplib import SMTPRecipientsRefused
 
 
 @app.route('/')
@@ -134,6 +136,45 @@ def cart(cart_id: int):
 
 @login_required
 @app.route('/remove/<int:product_id>/<int:cart_id>')
-def remove(product_id: int, cart_id):
+def remove(product_id: int, cart_id: int):
+    product = Product.query.get(product_id)
     cart = Cart.query.get(cart_id)
+    cart.product_id.remove(product)
+    cart.total_price -= product.price
+    db.session.add(cart)
+    db.session.commit()
+    flash('Товар успешно удален из корзины')
+    return redirect(url_for('cart', cart_id=cart_id))
 
+
+@login_required
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    search_information = request.form['search']
+    if search_information is not None:
+        cart = Cart.query.filter_by(user_id=current_user.id).first()
+        count = len(cart.product_id)
+        categories = Category.query.all()
+        page = request.args.get('page', 1, type=int)
+        products = Product.query.filter(Product.name.contains(search_information)).paginate(page, app.config[
+            'POSTS_PER_PAGE'], False)
+        next_url = url_for('catalog', page=products.next_num) if products.has_next else None
+        prev_url = url_for('catalog', page=products.prev_num) if products.has_prev else None
+        return render_template('catalog.html', categories=categories, products=products.items, title='Каталог',
+                               next_url=next_url, prev_url=prev_url, count=count)
+    return redirect(url_for('catalog'))
+
+
+@login_required
+@app.route('/makeorder/<int:cart_id>')
+def make_order(cart_id):
+    cart = Cart.query.get(cart_id)
+    try:
+        msg = Message('Оформление заказа', sender=app.config['ADMINS'][0], recipients=['mkritsyn@fromtech.ru'])
+        msg.html = render_template('email/make_order.html', products=cart.product_id)
+        mail.send(msg)
+        flash('Заказ оформлен')
+        return redirect(url_for('catalog'))
+    except SMTPRecipientsRefused:
+        flash('Ошибка!Неправильная почта')
+        return redirect(url_for('catalog'))

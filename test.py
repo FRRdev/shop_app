@@ -1,7 +1,4 @@
-import re
-
-from config import app_dir
-import os
+import app
 from PIL import Image
 
 
@@ -11,4 +8,9 @@ def resize_image():
     resized_image = original_image.resize((200,200))
     resized_image.save('default.png')
 
-print('Hello')
+from flask_mail import Message
+from app import mail
+msg = Message('test subject', sender='mixail.critsyn@mail.ru',recipients=['mkritsyn@fromtech.ru'])
+msg.body = 'test body'
+msg.html = '<h1>HTML body</h1>'
+mail.send(msg)
