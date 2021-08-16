@@ -11,3 +11,4 @@ def resize_image():
     resized_image = original_image.resize((200,200))
     resized_image.save('default.png')
 
+print('Hello')
