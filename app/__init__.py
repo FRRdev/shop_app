@@ -14,7 +14,9 @@ login = LoginManager(app)
 bootstrap = Bootstrap(app)
 mail = Mail(app)
 from app.admin.routes import admin_bp
+from app.api import bp as api_bp
 
 app.register_blueprint(admin_bp, url_prefix='/admin')
+app.register_blueprint(api_bp, url_prefix='/api')
 
 from app import routes, models, errors

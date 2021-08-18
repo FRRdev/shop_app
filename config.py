@@ -17,6 +17,9 @@ class BaseConfig:
     POSTS_PER_PAGE = 3
     ADMINS = ['mixail.critsyn@mail.ru']
 
+    #вывод кирилицы в api
+    JSON_AS_ASCII = False
+
     SECURITY_PASSWORD_SALT = 'My-SALT'
     # URLs
     SECURITY_URL_PREFIX = "/admin"

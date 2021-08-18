@@ -1,11 +1,35 @@
 import re
-
+from flask import url_for
 from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from flask_security import RoleMixin
 import os
 from config import app_dir
+
+
+class PaginatedAPIMixin(object):
+    @staticmethod
+    def to_collection_dict(query, page, per_page, endpoint, **kwargs):
+        resources = query.paginate(page, per_page, False)
+        data = {
+            'items': [item.to_dict() for item in resources.items],
+            '_meta': {
+                'page': page,
+                'per_page': per_page,
+                'total_pages': resources.pages,
+                'total_items': resources.total
+            },
+            '_links': {
+                'self': url_for(endpoint, page=page, per_page=per_page,
+                                **kwargs),
+                'next': url_for(endpoint, page=page + 1, per_page=per_page,
+                                **kwargs) if resources.has_next else None,
+                'prev': url_for(endpoint, page=page - 1, per_page=per_page,
+                                **kwargs) if resources.has_prev else None
+            }
+        }
+        return data
 
 
 @login.user_loader
@@ -35,7 +59,7 @@ class Role(db.Model, RoleMixin):
         return self.name
 
 
-class Users(UserMixin, db.Model):
+class Users(PaginatedAPIMixin, UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(64), index=True, unique=True)
@@ -66,6 +90,34 @@ class Users(UserMixin, db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+    def to_dict(self, include_email=False):
+        products = ",".join([str(product.name) for product in self.cart_id.product_id]) if len(
+            self.cart_id.product_id) != 0 else None
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'count_products': len(self.cart_id.product_id),
+            'cart': {
+                'cart_id': self.cart_id.id,
+                'products': products,
+            },
+            '_links': {
+                'self': url_for('api.get_user', id=self.id),
+            }
+        }
+        if include_email:
+            data['email'] = self.email
+        return data
+
+    def from_dict(self, data, new_user=False):
+        for field in ['username', 'email', 'first_name', 'last_name']:
+            if field in data:
+                setattr(self, field, data[field])
+        if new_user and 'password' in data:
+            self.set_password(data['password'])
+
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -76,7 +128,7 @@ class Category(db.Model):
         return '<Category {}>'.format(self.name)
 
 
-class Product(db.Model):
+class Product(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(64), index=True, unique=True)
     description = db.Column(db.Text)
@@ -108,6 +160,27 @@ class Product(db.Model):
 
     def __repr__(self):
         return '<Products {}>'.format(self.name)
+
+    def to_dict(self):
+        cart_id = ",".join([str(cart.id) for cart in self.cart.all()]) if len(self.cart.all()) != 0 else None
+        data = {
+            'id': self.id,
+            'name': self.name,
+            'price': self.price,
+            'description': self.description,
+            'count_cart': self.cart.count(),
+            'id_cart': cart_id,
+            '_links': {
+                'self': url_for('api.get_product', id=self.id),
+                'image': self.get_product_photo()
+            }
+        }
+        return data
+
+    def from_dict(self, data):
+        for field in ['name', 'price', 'description','category_id']:
+            if field in data:
+                setattr(self, field, data[field])
 
 
 class Cart(db.Model):
