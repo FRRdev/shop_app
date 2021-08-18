@@ -6,7 +6,9 @@ from flask_login import UserMixin
 from flask_security import RoleMixin
 import os
 from config import app_dir
-
+from datetime import datetime,timedelta
+import base64
+import os
 
 class PaginatedAPIMixin(object):
     @staticmethod
@@ -71,6 +73,8 @@ class Users(PaginatedAPIMixin, UserMixin, db.Model):
     comment_id = db.relationship('Comment', backref='user', lazy='dynamic')
     # Нужен для security!
     active = db.Column(db.Boolean())
+    token_expiration = db.Column(db.DateTime) #время жизни токена
+    token = db.Column(db.String(32), index=True, unique=True)
     # Для получения доступа к связанным объектам
     roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
 
@@ -117,6 +121,25 @@ class Users(PaginatedAPIMixin, UserMixin, db.Model):
                 setattr(self, field, data[field])
         if new_user and 'password' in data:
             self.set_password(data['password'])
+
+    def get_token(self, expires_in=3600):
+        now = datetime.utcnow()
+        if self.token and self.token_expiration > now + timedelta(seconds=60):
+            return self.token
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.token_expiration = now + timedelta(seconds=expires_in)
+        db.session.add(self)
+        return self.token
+
+    def revoke_token(self):
+        self.token_expiration = datetime.utcnow() - timedelta(seconds=1)
+
+    @staticmethod
+    def check_token(token):
+        user = Users.query.filter_by(token=token).first()
+        if user is None or user.token_expiration < datetime.utcnow():
+            return None
+        return user
 
 
 class Category(db.Model):
