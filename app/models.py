@@ -94,9 +94,17 @@ class Users(PaginatedAPIMixin, UserMixin, db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+    @staticmethod
+    def prod_to_dict(item):
+        result_dict = {}
+        result_dict['id'] = item[0]
+        result_dict['name'] = item[1]
+        return result_dict
+
     def to_dict(self, include_email=False):
         products = ",".join([str(product.name) for product in self.cart_id.product_id]) if len(
             self.cart_id.product_id) != 0 else None
+        products_v2 = [(str(product.id),str(product.name)) for product in self.cart_id.product_id]
         data = {
             'id': self.id,
             'username': self.username,
@@ -105,7 +113,7 @@ class Users(PaginatedAPIMixin, UserMixin, db.Model):
             'count_products': len(self.cart_id.product_id),
             'cart': {
                 'cart_id': self.cart_id.id,
-                'products': products,
+                'products': [Users.prod_to_dict(item) for item in products_v2],
             },
             '_links': {
                 'self': url_for('api.get_user', id=self.id),
